@@ -19,35 +19,38 @@ const GeneratedComponent = () => {
 };
 `;
 
-// Using a type for the event helps with clarity. The body is a string that needs to be parsed.
-interface NetlifyEvent {
-    body: string;
-    // Fix: Add httpMethod to the NetlifyEvent type to match Netlify's function event shape.
-    httpMethod: string;
+// This interface is for the incoming request from the Netlify frontend.
+interface RequestBody {
+    prompt: string;
 }
 
-export const handler = async (event: NetlifyEvent) => {
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
+// Netlify's modern handler for streaming responses uses Request and Response objects.
+export default async (req: Request) => {
+  if (req.method !== 'POST') {
+    return new Response('Method Not Allowed', { status: 405 });
   }
 
   if (!process.env.API_KEY) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: "Server configuration error. Could not connect to the AI service." }),
-    };
+    return new Response(JSON.stringify({ error: "Server configuration error. Could not connect to the AI service." }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
   
   try {
-    const { prompt } = JSON.parse(event.body);
+    const { prompt } = (await req.json()) as RequestBody;
     if (!prompt) {
-        return { statusCode: 400, body: JSON.stringify({ error: "Prompt is required." }) };
+        return new Response(JSON.stringify({ error: "Prompt is required." }), { 
+            status: 400,
+            headers: { 'Content-Type': 'application/json' },
+        });
     }
 
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-    const response = await ai.models.generateContent({
+    
+    // Use the streaming model
+    const responseStream = await ai.models.generateContentStream({
         model: "gemini-2.5-flash",
-        // Fix: Simplified contents to be a direct string as per Gemini API guidelines for single text prompts.
         contents: prompt,
         config: {
             systemInstruction: componentGeneratorSystemInstruction,
@@ -55,17 +58,38 @@ export const handler = async (event: NetlifyEvent) => {
         }
     });
 
-    return {
-      statusCode: 200,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code: response.text }),
-    };
+    // Create a new stream to pipe the results to the client
+    const stream = new ReadableStream({
+      async start(controller) {
+        const encoder = new TextEncoder();
+        for await (const chunk of responseStream) {
+          const text = chunk.text;
+          if (text) {
+            controller.enqueue(encoder.encode(text));
+          }
+        }
+        controller.close();
+      },
+    });
+
+    return new Response(stream, {
+      status: 200,
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'X-Content-Type-Options': 'nosniff',
+      },
+    });
+
   } catch (error: any) {
     console.error("Error in generate-component function:", error);
-    return {
-      statusCode: 500,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ error: "Failed to generate component.", details: error.message }),
-    };
+    return new Response(JSON.stringify({ error: "Failed to generate component.", details: error.message }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+    });
   }
+};
+
+// Netlify requires a config object to specify the function path for modern handlers.
+export const config = {
+    path: "/.netlify/functions/generate-component",
 };

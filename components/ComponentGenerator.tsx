@@ -77,15 +77,17 @@ const ComponentGenerator: React.FC = () => {
     setIsLoading(true);
     setError(null);
     setGeneratedCode('');
-    setActiveTab('preview');
+    setActiveTab('code'); // Default to code view while streaming
 
     try {
-      const code = await generateComponent(prompt);
-      setGeneratedCode(code);
+      await generateComponent(prompt, (chunk) => {
+        setGeneratedCode((prevCode) => prevCode + chunk);
+      });
     } catch (err: any) {
       setError(err.message || 'An unknown error occurred.');
     } finally {
       setIsLoading(false);
+      setActiveTab('preview'); // Switch to preview once done
     }
   }, [prompt]);
   
@@ -132,7 +134,7 @@ const ComponentGenerator: React.FC = () => {
 
       {/* Right Panel: Output */}
       <div className="lg:col-span-3 bg-surface rounded-lg border border-border min-h-[60vh] flex flex-col">
-        {isLoading ? (
+        {isLoading && !generatedCode ? (
           <div className="flex flex-col items-center justify-center h-full text-text-muted p-8">
             <LoadingSpinner />
             <p className="mt-4 text-sm">AI is creating your component...</p>
@@ -142,7 +144,7 @@ const ComponentGenerator: React.FC = () => {
             <h3 className="font-semibold text-danger">Generation Failed</h3>
             <p className="mt-2 text-sm text-danger bg-danger/10 p-4 rounded-md w-full">{error}</p>
           </div>
-        ) : generatedCode ? (
+        ) : generatedCode || isLoading ? (
           <div className="flex flex-col flex-grow">
             <div className="flex justify-between items-center border-b border-border px-2">
                 <div className="flex">
