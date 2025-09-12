@@ -1,0 +1,5 @@
+{
+  "name": "Web Check AI",
+  "description": "An AI-powered developer toolkit featuring a UI Component Generator that creates React/Tailwind components from prompts, and a Regex Generator that provides regular expressions with explanations.",
+  "requestFramePermissions": []
+}
