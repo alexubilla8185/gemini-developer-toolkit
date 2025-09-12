@@ -2,6 +2,7 @@
 export enum Tool {
   Component = 'component',
   Regex = 'regex',
+  SiteAuditor = 'siteAuditor',
   Waitlist = 'waitlist',
 }
 

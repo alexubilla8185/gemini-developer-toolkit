@@ -34,6 +34,12 @@ const Header: React.FC<HeaderProps> = ({ activeTool, setActiveTool }) => {
             Regex Generator
           </button>
           <button
+            onClick={() => setActiveTool(Tool.SiteAuditor)}
+            className={navButtonClasses(Tool.SiteAuditor)}
+          >
+            Site Auditor
+          </button>
+          <button
             onClick={() => setActiveTool(Tool.Waitlist)}
             className={navButtonClasses(Tool.Waitlist)}
           >
