@@ -29,7 +29,7 @@ export const handler = async (event: NetlifyEvent) => {
   if (!process.env.API_KEY) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: "API_KEY environment variable not set on the server." }),
+      body: JSON.stringify({ error: "Server configuration error. Could not connect to the AI service." }),
     };
   }
 
