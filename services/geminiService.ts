@@ -46,7 +46,7 @@ export const generateComponent = async (prompt: string): Promise<string> => {
     try {
         const response = await ai.models.generateContent({
             model: "gemini-2.5-flash",
-            contents: prompt,
+            contents: { parts: [{ text: prompt }] },
             config: {
                 systemInstruction: componentGeneratorSystemInstruction,
                 temperature: 0.2,
@@ -63,7 +63,7 @@ export const generateRegex = async (prompt: string): Promise<RegexResponse> => {
     try {
         const response = await ai.models.generateContent({
             model: "gemini-2.5-flash",
-            contents: `Generate a regular expression for this description: "${prompt}"`,
+            contents: { parts: [{ text: `Generate a regular expression for this description: "${prompt}"` }] },
             config: {
                 responseMimeType: "application/json",
                 responseSchema: regexResponseSchema,

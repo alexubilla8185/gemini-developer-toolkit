@@ -5,7 +5,6 @@ import RegexGenerator from './RegexGenerator';
 import Waitlist from './Waitlist';
 import { Tool } from '../types';
 import { ICONS } from '../constants';
-import SiteAuditor from './SiteAuditor';
 
 const AppLayout: React.FC = () => {
   const [activeTool, setActiveTool] = useState<Tool>(Tool.Component);
@@ -16,7 +15,6 @@ const AppLayout: React.FC = () => {
       <main className="p-4 sm:p-6 md:p-8">
         {activeTool === Tool.Component && <ComponentGenerator />}
         {activeTool === Tool.Regex && <RegexGenerator />}
-        {activeTool === Tool.SiteAuditor && <SiteAuditor />}
         {activeTool === Tool.Waitlist && <Waitlist />}
       </main>
       <footer className="text-center p-4 text-sm text-text-muted border-t border-border">

@@ -1,8 +1,57 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { generateComponent } from '../services/geminiService';
 import CodeBlock from './CodeBlock';
 import LoadingSpinner from './LoadingSpinner';
 import { ICONS } from '../constants';
+
+// Moved helper function outside the component to prevent re-creation on every render.
+const createIframeContent = (componentCode: string, theme: 'light' | 'dark') => {
+  const isDark = theme === 'dark';
+  return `
+    <!DOCTYPE html>
+    <html class="${isDark ? 'dark' : ''}">
+      <head>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+          tailwind.config = {
+            darkMode: 'class',
+          }
+        </script>
+        <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+        <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+        <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+        <style>
+          body { 
+            background-color: ${isDark ? '#0e1116' : '#f8fafc'};
+            color: ${isDark ? '#e5e7eb' : '#111827'};
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 1rem;
+            font-family: sans-serif;
+          }
+        </style>
+      </head>
+      <body>
+        <div id="component-root"></div>
+        <script type="text/babel">
+          try {
+            ${componentCode}
+            const container = document.getElementById('component-root');
+            const root = ReactDOM.createRoot(container);
+            root.render(<GeneratedComponent />);
+          } catch (e) {
+            const root = document.getElementById('component-root');
+            root.innerHTML = '<div style="color: red; font-family: monospace;"><b>Render Error:</b><br/>' + e.message + '</div>';
+            console.error(e);
+          }
+        </script>
+      </body>
+    </html>
+  `;
+};
 
 const ComponentGenerator: React.FC = () => {
   const [prompt, setPrompt] = useState<string>('');
@@ -10,47 +59,13 @@ const ComponentGenerator: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'preview' | 'code'>('preview');
+  const [previewTheme, setPreviewTheme] = useState<'light' | 'dark'>('light');
 
-  const createIframeContent = (componentCode: string) => {
-    return `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <script src="https://cdn.tailwindcss.com"></script>
-          <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-          <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-          <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-          <style>
-            body { 
-              background-color: #f8fafc; /* light theme for preview */
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              min-height: 100vh;
-              margin: 0;
-              padding: 1rem;
-              font-family: sans-serif;
-            }
-          </style>
-        </head>
-        <body>
-          <div id="component-root"></div>
-          <script type="text/babel">
-            try {
-              ${componentCode}
-              const container = document.getElementById('component-root');
-              const root = ReactDOM.createRoot(container);
-              root.render(<GeneratedComponent />);
-            } catch (e) {
-              const root = document.getElementById('component-root');
-              root.innerHTML = '<div style="color: red; font-family: monospace;"><b>Render Error:</b><br/>' + e.message + '</div>';
-              console.error(e);
-            }
-          </script>
-        </body>
-      </html>
-    `;
-  };
+  // Memoize the iframe content to prevent unnecessary re-renders.
+  const iframeContent = useMemo(() => {
+    if (!generatedCode) return '';
+    return createIframeContent(generatedCode, previewTheme);
+  }, [generatedCode, previewTheme]);
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
@@ -79,6 +94,13 @@ const ComponentGenerator: React.FC = () => {
       activeTab === tabName
         ? 'border-secondary text-text'
         : 'border-transparent text-text-muted hover:text-text'
+    }`;
+
+  const themeButtonClasses = (themeName: 'light' | 'dark') =>
+    `p-2 rounded-md transition-colors ${
+        previewTheme === themeName
+        ? 'bg-primary text-secondary'
+        : 'text-text-muted hover:bg-primary'
     }`;
 
   return (
@@ -122,15 +144,27 @@ const ComponentGenerator: React.FC = () => {
           </div>
         ) : generatedCode ? (
           <div className="flex flex-col flex-grow">
-            <div className="flex border-b border-border px-2">
-              <button onClick={() => setActiveTab('preview')} className={tabClasses('preview')}>Live Preview</button>
-              <button onClick={() => setActiveTab('code')} className={tabClasses('code')}>Code</button>
+            <div className="flex justify-between items-center border-b border-border px-2">
+                <div className="flex">
+                    <button onClick={() => setActiveTab('preview')} className={tabClasses('preview')}>Live Preview</button>
+                    <button onClick={() => setActiveTab('code')} className={tabClasses('code')}>Code</button>
+                </div>
+                {activeTab === 'preview' && (
+                    <div className="flex items-center space-x-1 mr-2 bg-background p-1 rounded-lg">
+                        <button onClick={() => setPreviewTheme('light')} className={themeButtonClasses('light')} aria-label="Switch to light theme">
+                            {ICONS.SUN}
+                        </button>
+                        <button onClick={() => setPreviewTheme('dark')} className={themeButtonClasses('dark')} aria-label="Switch to dark theme">
+                            {ICONS.MOON}
+                        </button>
+                    </div>
+                )}
             </div>
             <div className="flex-grow relative bg-background rounded-b-lg">
                 {activeTab === 'preview' ? (
-                  <div className="w-full h-full bg-gray-100 rounded-b-lg overflow-hidden">
+                  <div className={`w-full h-full rounded-b-lg overflow-hidden ${previewTheme === 'light' ? 'bg-gray-100' : 'bg-background'}`}>
                     <iframe
-                      srcDoc={createIframeContent(generatedCode)}
+                      srcDoc={iframeContent}
                       title="Component Preview"
                       className="w-full h-full border-0"
                       sandbox="allow-scripts"
