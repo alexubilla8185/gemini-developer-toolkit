@@ -41,7 +41,9 @@ const RegexGenerator: React.FC = () => {
           <p className="text-text-muted">Describe the pattern you want to match, and the AI will generate the regex and a detailed explanation.</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
+          <label htmlFor="regex-prompt" className="sr-only">Regex Description</label>
           <textarea
+            id="regex-prompt"
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             placeholder="e.g., 'a valid email address', or 'a password with at least 8 characters, one number, and one uppercase letter'."

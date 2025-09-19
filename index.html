@@ -2,9 +2,32 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Web Check AI</title>
+    <title>Web Check AI | AI-Powered Frontend Toolkit</title>
+    <meta name="description" content="An AI-powered developer toolkit featuring a UI Component Generator that creates React/Tailwind components from prompts, and a Regex Generator that provides regular expressions with explanations." />
+
+    <!-- Favicon and PWA -->
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <meta name="theme-color" content="#05BDBA">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://web-check-ai.netlify.app/">
+    <meta property="og:title" content="Web Check AI | Your AI-Powered Frontend Co-pilot">
+    <meta property="og:description" content="Generate React components, create regular expressions, and accelerate your workflow with the power of Google's Gemini API.">
+    <meta property="og:image" content="https://web-check-ai.netlify.app/og-image.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://web-check-ai.netlify.app/">
+    <meta property="twitter:title" content="Web Check AI | Your AI-Powered Frontend Co-pilot">
+    <meta property="twitter:description" content="Generate React components, create regular expressions, and accelerate your workflow with the power of Google's Gemini API.">
+    <meta property="twitter:image" content="https://web-check-ai.netlify.app/og-image.png">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -21,6 +44,15 @@
               'success': '#238636',
               'danger': '#f85149',
             },
+            animation: {
+              'fade-in': 'fadeIn 0.3s ease-out forwards',
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0', transform: 'scale(0.95)' },
+                '100%': { opacity: '1', transform: 'scale(1)' },
+              },
+            }
           },
         },
       }

@@ -114,7 +114,9 @@ const ComponentGenerator: React.FC = () => {
           <p className="text-text-muted">Describe the component you want to build. The more detailed your description, the better the result.</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
+          <label htmlFor="component-prompt" className="sr-only">Component Description</label>
           <textarea
+            id="component-prompt"
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             placeholder="e.g., 'A responsive navbar with a logo and three links', or 'a product card with an image and a buy button'."
