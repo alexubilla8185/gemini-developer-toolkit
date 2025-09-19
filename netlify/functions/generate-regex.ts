@@ -15,34 +15,30 @@ const regexResponseSchema = {
     required: ["pattern", "explanation"],
 };
 
-interface NetlifyEvent {
-    body: string;
-    // Fix: Add httpMethod to the NetlifyEvent type to match Netlify's function event shape.
-    httpMethod: string;
-}
-
-export const handler = async (event: NetlifyEvent) => {
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
+export default async (req: Request) => {
+  if (req.method !== 'POST') {
+    return new Response('Method Not Allowed', { status: 405 });
   }
 
   if (!process.env.API_KEY) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: "Server configuration error. Could not connect to the AI service." }),
-    };
+    return new Response(JSON.stringify({ error: "Server configuration error. Could not connect to the AI service." }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 
   try {
-    const { prompt } = JSON.parse(event.body);
+    const { prompt } = await req.json();
     if (!prompt) {
-        return { statusCode: 400, body: JSON.stringify({ error: "Prompt is required." }) };
+        return new Response(JSON.stringify({ error: "Prompt is required." }), { 
+            status: 400,
+            headers: { 'Content-Type': 'application/json' },
+        });
     }
 
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const response = await ai.models.generateContent({
         model: "gemini-2.5-flash",
-        // Fix: Simplified contents to be a direct string as per Gemini API guidelines for single text prompts.
         contents: `Generate a regular expression for this description: "${prompt}"`,
         config: {
             responseMimeType: "application/json",
@@ -50,18 +46,16 @@ export const handler = async (event: NetlifyEvent) => {
         }
     });
     
-    return {
-      statusCode: 200,
+    return new Response(response.text, {
+      status: 200,
       headers: { 'Content-Type': 'application/json' },
-      body: response.text, // Directly pass the JSON string from Gemini
-    };
+    });
 
   } catch (error: any) {
     console.error("Error in generate-regex function:", error);
-    return {
-      statusCode: 500,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ error: "Failed to generate regex.", details: error.message }),
-    };
+    return new Response(JSON.stringify({ error: "Failed to generate regex.", details: error.message }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+    });
   }
 };

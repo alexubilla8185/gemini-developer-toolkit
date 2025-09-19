@@ -10,7 +10,7 @@ const WaitlistForm: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { showNotification } = useNotification();
 
-  const handleSubmit = useCallback((e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     if (isLoading) return;
 
@@ -24,13 +24,27 @@ const WaitlistForm: React.FC = () => {
     setIsLoading(true);
     setError(null);
 
-    // Simulate a network request
-    setTimeout(() => {
-      console.log(`Waitlist submission: ${email}`);
-      setIsLoading(false);
-      setIsSubmitted(true);
-      showNotification("You're on the list! We'll be in touch.", 'success');
-    }, 1000);
+    try {
+        const response = await fetch('/.netlify/functions/waitlist-signup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email }),
+        });
+
+        if (!response.ok) {
+            const data = await response.json();
+            throw new Error(data.error || 'Something went wrong.');
+        }
+
+        setIsSubmitted(true);
+        showNotification("You're on the list! We'll be in touch.", 'success');
+
+    } catch (err: any) {
+        setError(err.message);
+        showNotification(err.message, 'error');
+    } finally {
+        setIsLoading(false);
+    }
   }, [email, isLoading, showNotification]);
 
   if (isSubmitted) {
