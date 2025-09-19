@@ -1,8 +1,10 @@
+
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import LandingPage from './components/LandingPage';
 import AppLayout from './components/AppLayout';
 import { NotificationProvider, useNotification } from './context/NotificationContext';
+import { FavoritesProvider } from './context/FavoritesContext';
 import Alert from './components/Alert';
 
 // This component listens to the notification context and renders the Alert when needed.
@@ -21,11 +23,13 @@ const GlobalAlertManager: React.FC = () => {
 const App: React.FC = () => {
   return (
     <NotificationProvider>
-      <GlobalAlertManager />
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/app" element={<AppLayout />} />
-      </Routes>
+      <FavoritesProvider>
+        <GlobalAlertManager />
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/app" element={<AppLayout />} />
+        </Routes>
+      </FavoritesProvider>
     </NotificationProvider>
   );
 };

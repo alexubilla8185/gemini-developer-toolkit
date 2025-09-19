@@ -4,6 +4,7 @@ import CodeBlock from './CodeBlock';
 import LoadingSpinner from './LoadingSpinner';
 import { ICONS } from '../constants';
 import { useNotification } from '../context/NotificationContext';
+import { useFavorites } from '../context/FavoritesContext';
 
 // Moved helper function outside the component to prevent re-creation on every render.
 const createIframeContent = (componentCode: string, theme: 'light' | 'dark') => {
@@ -62,6 +63,18 @@ const ComponentGenerator: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'preview' | 'code'>('preview');
   const [previewTheme, setPreviewTheme] = useState<'light' | 'dark'>('light');
   const { showNotification } = useNotification();
+  const { addFavoriteComponent } = useFavorites();
+
+  const handleSaveToFavorites = () => {
+    if (!generatedCode || !prompt) return;
+    addFavoriteComponent({
+      id: crypto.randomUUID(),
+      prompt,
+      code: generatedCode,
+      createdAt: new Date().toISOString(),
+    });
+    showNotification('Component saved to your collection!', 'success');
+  };
 
   // Memoize the iframe content to prevent unnecessary re-renders.
   const iframeContent = useMemo(() => {
@@ -159,16 +172,23 @@ const ComponentGenerator: React.FC = () => {
                     <button id="preview-tab" role="tab" aria-selected={activeTab === 'preview'} aria-controls="preview-panel" onClick={() => setActiveTab('preview')} className={tabClasses('preview')}>Live Preview</button>
                     <button id="code-tab" role="tab" aria-selected={activeTab === 'code'} aria-controls="code-panel" onClick={() => setActiveTab('code')} className={tabClasses('code')}>Code</button>
                 </div>
-                {activeTab === 'preview' && (
-                    <div className="flex items-center space-x-1 mr-2 bg-background p-1 rounded-lg">
-                        <button onClick={() => setPreviewTheme('light')} className={themeButtonClasses('light')} aria-label="Switch to light theme">
-                            {ICONS.SUN}
+                <div className="flex items-center space-x-2">
+                    {activeTab === 'preview' && (
+                        <div className="flex items-center space-x-1 mr-2 bg-background p-1 rounded-lg">
+                            <button onClick={() => setPreviewTheme('light')} className={themeButtonClasses('light')} aria-label="Switch to light theme">
+                                {ICONS.SUN}
+                            </button>
+                            <button onClick={() => setPreviewTheme('dark')} className={themeButtonClasses('dark')} aria-label="Switch to dark theme">
+                                {ICONS.MOON}
+                            </button>
+                        </div>
+                    )}
+                    {!isLoading && generatedCode && (
+                         <button onClick={handleSaveToFavorites} className="flex items-center gap-1.5 p-2 text-sm text-text-muted hover:text-secondary transition-colors" aria-label="Save to collection">
+                            {ICONS.STAR}
                         </button>
-                        <button onClick={() => setPreviewTheme('dark')} className={themeButtonClasses('dark')} aria-label="Switch to dark theme">
-                            {ICONS.MOON}
-                        </button>
-                    </div>
-                )}
+                    )}
+                </div>
             </div>
             <div className="flex-grow relative bg-background rounded-b-lg">
                 <div

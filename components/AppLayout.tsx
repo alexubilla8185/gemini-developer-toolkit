@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Header from './Header';
 import ComponentGenerator from './ComponentGenerator';
 import RegexGenerator from './RegexGenerator';
+import FavoritesView from './FavoritesView';
 import { Tool } from '../types';
 import { ICONS } from '../constants';
 import { MadeByTekguyz } from './MadeByTekguyz';
@@ -18,6 +19,7 @@ const AppLayout: React.FC = () => {
       <main className="p-4 sm:p-6 md:p-8 flex-grow">
         {activeTool === Tool.Component && <ComponentGenerator />}
         {activeTool === Tool.Regex && <RegexGenerator />}
+        {activeTool === Tool.Favorites && <FavoritesView />}
       </main>
       <footer className="text-center p-4 text-sm text-text-muted border-t border-border">
         <div className="flex flex-col items-center justify-center space-y-4">

@@ -5,6 +5,7 @@ import LoadingSpinner from './LoadingSpinner';
 import type { RegexResponse } from '../types';
 import { ICONS } from '../constants';
 import { useNotification } from '../context/NotificationContext';
+import { useFavorites } from '../context/FavoritesContext';
 
 const RegexGenerator: React.FC = () => {
   const [prompt, setPrompt] = useState<string>('');
@@ -12,6 +13,7 @@ const RegexGenerator: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const { showNotification } = useNotification();
+  const { addFavoriteRegex } = useFavorites();
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,6 +39,18 @@ const RegexGenerator: React.FC = () => {
       setIsLoading(false);
     }
   }, [prompt, showNotification]);
+
+  const handleSaveToFavorites = () => {
+    if (!result || !prompt) return;
+    addFavoriteRegex({
+      id: crypto.randomUUID(),
+      prompt,
+      pattern: result.pattern,
+      explanation: result.explanation,
+      createdAt: new Date().toISOString(),
+    });
+    showNotification('Regex saved to your collection!', 'success');
+  };
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
@@ -80,11 +94,15 @@ const RegexGenerator: React.FC = () => {
             <div role="alert" className="mt-2 text-sm text-danger bg-danger/10 p-4 rounded-md w-full">{error}</div>
           </div>
         ) : result ? (
-          <div className="space-y-6">
-            <div>
-              <h3 className="font-semibold mb-2 text-text">Generated Regex Pattern</h3>
-              <CodeBlock code={result.pattern} />
+          <div className="space-y-6 animate-fade-in">
+             <div className="flex justify-between items-center">
+                <h3 className="font-semibold text-text">Generated Regex Pattern</h3>
+                <button onClick={handleSaveToFavorites} className="flex items-center gap-1.5 p-2 text-sm text-text-muted hover:text-secondary transition-colors" aria-label="Save to collection">
+                    {ICONS.STAR}
+                    <span>Save</span>
+                </button>
             </div>
+            <CodeBlock code={result.pattern} />
             <div>
               <h3 className="font-semibold mb-2 text-text">Explanation</h3>
               <div className="p-4 bg-background border border-border rounded-lg whitespace-pre-wrap text-sm leading-relaxed text-text">

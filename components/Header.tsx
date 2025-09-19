@@ -35,6 +35,12 @@ const Header: React.FC<HeaderProps> = ({ activeTool, setActiveTool }) => {
           >
             Regex Generator
           </button>
+          <button
+            onClick={() => setActiveTool(Tool.Favorites)}
+            className={navButtonClasses(Tool.Favorites)}
+          >
+            Collection
+          </button>
         </div>
       </nav>
     </header>
