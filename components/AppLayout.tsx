@@ -32,7 +32,6 @@ const AppLayout: React.FC = () => {
                     {ICONS.LINKEDIN}
                 </a>
             </div>
-             <p>Designed & Developed by Alejandro Ubilla</p>
         </div>
       </footer>
       <MadeByTekguyz theme="dark" />

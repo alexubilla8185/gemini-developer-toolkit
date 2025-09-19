@@ -12,17 +12,28 @@ const FooterLogo: React.FC<FooterLogoProps> = ({ onClick }) => {
       aria-label="View Application Specifications"
     >
       <svg 
-        width="32" 
-        height="32" 
-        viewBox="0 0 32 32" 
+        width="28" 
+        height="28" 
+        viewBox="0 0 24 24"
         fill="none" 
         xmlns="http://www.w3.org/2000/svg" 
         className="text-text-muted group-hover:text-secondary transition-colors duration-300"
       >
         <title>Web Check AI Logomark</title>
-        <path d="M16 28C22.6274 28 28 22.6274 28 16C28 9.37258 22.6274 4 16 4C9.37258 4 4 9.37258 4 16C4 22.6274 9.37258 28 16 28Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        <path d="M10 16L14 20L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        <path d="M22 17V19C22 20.6569 20.6569 22 19 22H13C11.3431 22 10 20.6569 10 19V17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.7"/>
+        <path
+            d="M12 2L4 6V18L12 22L20 18V6L12 2Z"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
+        <path
+            d="M8 12L11 15L16 10"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
       </svg>
     </button>
   );

@@ -20,7 +20,7 @@ const Header: React.FC<HeaderProps> = ({ activeTool, setActiveTool }) => {
     <header className="bg-background/90 backdrop-blur-sm sticky top-0 z-10 border-b border-border">
       <nav className="container mx-auto px-4 sm:px-6 md:px-8 py-3 flex justify-between items-center">
         <Link to="/" aria-label="Go to homepage">
-          <Logo className="h-6" />
+          <Logo />
         </Link>
         <div className="flex items-center space-x-1 sm:space-x-2">
           <button
