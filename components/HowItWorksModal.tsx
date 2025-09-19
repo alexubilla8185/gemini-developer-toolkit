@@ -1,8 +1,19 @@
 import React from 'react';
+import { ICONS } from '../constants';
 
 interface HowItWorksModalProps {
   onClose: () => void;
 }
+
+const Section: React.FC<{ title: string; icon: JSX.Element; children: React.ReactNode }> = ({ title, icon, children }) => (
+    <div>
+        <div className="flex items-center gap-3 mb-2">
+            <span className="text-secondary">{icon}</span>
+            <h3 className="font-bold text-lg text-text">{title}</h3>
+        </div>
+        <div className="pl-9 space-y-2 border-l-2 border-border/50 ml-3">{children}</div>
+    </div>
+);
 
 const HowItWorksModal: React.FC<HowItWorksModalProps> = ({ onClose }) => {
   return (
@@ -14,32 +25,62 @@ const HowItWorksModal: React.FC<HowItWorksModalProps> = ({ onClose }) => {
       aria-labelledby="how-it-works-title"
     >
       <div 
-        className="bg-surface rounded-lg shadow-2xl border border-border w-full max-w-lg m-4 p-6"
+        className="bg-surface rounded-lg shadow-2xl border border-border w-full max-w-2xl m-4"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex justify-between items-center p-6 border-b border-border">
           <h2 id="how-it-works-title" className="text-xl font-bold text-text">
             How It Works
           </h2>
           <button 
             onClick={onClose}
-            className="text-text-muted hover:text-text"
+            className="text-text-muted hover:text-text p-1 rounded-full"
             aria-label="Close modal"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            {ICONS.CLOSE}
           </button>
         </div>
-        <div className="text-sm text-text-muted space-y-4">
-          <p>This toolkit uses Google's Gemini AI to help you generate code and other developer assets. For the best results, be descriptive and clear in your prompts.</p>
-          <h3 className="font-semibold text-text">Tips for UI Component Generation:</h3>
-          <ul className="list-disc list-inside space-y-2">
-            <li><strong>Be Specific:</strong> Instead of "a button," try "a primary action button with a solid teal background and white text."</li>
-            <li><strong>Mention State:</strong> Describe hover states or active states, e.g., "the button should get slightly darker on hover."</li>
-            <li><strong>Include Content:</strong> Specify text for labels, buttons, and placeholders for better context.</li>
-            <li><strong>Think Responsively:</strong> Mention how it should look on mobile vs. desktop if it's important, e.g., "a two-column layout on desktop that stacks on mobile."</li>
-          </ul>
-           <h3 className="font-semibold text-text">Tips for Regex & Cron Generation:</h3>
-            <p>Provide clear, unambiguous descriptions of the pattern or schedule you need. The AI is trained to understand natural language and convert it into the correct format.</p>
+        <div className="p-6 max-h-[70vh] overflow-y-auto text-sm text-text-muted space-y-6">
+          <p>This toolkit uses Google's Gemini AI to help you work faster. The key to great results is a great prompt. Be descriptive, specific, and clear about what you want.</p>
+          
+          <Section title="UI Component Generator" icon={ICONS.WAND}>
+            <p>Describe the user interface you want to create. The more detail you provide, the closer the result will be to your vision.</p>
+            <div className="space-y-1">
+                <p><strong>Good prompt:</strong> "a button"</p>
+                <p><strong>Better prompt:</strong> "A primary action button with a solid teal background, white text, rounded corners, and a slight shadow. It should get slightly darker on hover."</p>
+            </div>
+             <h4 className="font-semibold text-text pt-2">Pro-Tips:</h4>
+            <ul className="list-disc list-inside space-y-1 text-text-muted">
+                <li><strong>Mention State:</strong> Describe hover, focus, or disabled states.</li>
+                <li><strong>Include Content:</strong> Specify text for labels, buttons, and placeholders.</li>
+                <li><strong>Think Responsively:</strong> Mention layout changes for mobile vs. desktop.</li>
+            </ul>
+          </Section>
+
+          <Section title="Regex Generator" icon={ICONS.WAND}>
+            <p>Provide a clear, unambiguous description of the text pattern you need to match. The AI will handle the complex syntax.</p>
+            <div className="space-y-1">
+                <p><strong>Good prompt:</strong> "email"</p>
+                <p><strong>Better prompt:</strong> "a standard email address that can include a subdomain"</p>
+            </div>
+          </Section>
+
+          <Section title="Cron Generator" icon={ICONS.CLOCK}>
+            <p>Describe any schedule in plain English, from simple to complex. The AI will convert it into a valid cron expression.</p>
+            <div className="space-y-1">
+                 <p><strong>Good prompt:</strong> "every monday"</p>
+                 <p><strong>Better prompt:</strong> "at 2am on the first Monday of every month"</p>
+            </div>
+          </Section>
+
+          <Section title="JSON Formatter" icon={ICONS.JSON_BRACKETS}>
+            <p>This is a client-side tool. Paste any JSON data—even if it's messy—and click "Format & Validate". The tool will instantly beautify it and highlight any syntax errors.</p>
+          </Section>
+
+          <Section title="Your Collection" icon={ICONS.STAR}>
+            <p>Liked a result? Click the <strong>Save to Collection</strong> button to store it in your browser's local storage. Access all your saved items anytime from the "Collection" page.</p>
+          </Section>
+
         </div>
       </div>
     </div>
