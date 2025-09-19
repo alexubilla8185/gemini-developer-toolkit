@@ -28,7 +28,7 @@ const Alert: React.FC<AlertProps> = ({ message, type, onClose }) => {
 
   return (
     <div
-      className={`fixed top-5 right-5 z-[100] flex items-center justify-between max-w-sm w-full p-4 rounded-lg shadow-2xl border ${bgColor} ${borderColor} ${textColor} animate-fade-in`}
+      className={`fixed top-4 left-4 right-4 sm:left-auto sm:right-4 sm:w-full sm:max-w-sm z-[100] flex items-center justify-between p-4 rounded-lg shadow-2xl border ${bgColor} ${borderColor} ${textColor} animate-fade-in`}
       role="alert"
       aria-live="assertive"
     >
