@@ -5,6 +5,7 @@ import LoadingSpinner from './LoadingSpinner';
 import type { CronResponse } from '../types';
 import { ICONS } from '../constants';
 import { useNotification } from '../context/NotificationContext';
+import Tooltip from './Tooltip';
 
 const CronGenerator: React.FC = () => {
   const [prompt, setPrompt] = useState<string>('');
@@ -56,14 +57,16 @@ const CronGenerator: React.FC = () => {
             className="w-full h-32 p-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-secondary focus:outline-none transition-shadow"
             disabled={isLoading}
           />
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="inline-flex items-center justify-center w-full sm:w-auto px-6 py-3 font-semibold text-background bg-secondary rounded-lg shadow-md hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-secondary disabled:bg-surface disabled:text-text-muted disabled:cursor-not-allowed transition-colors"
-          >
-            {isLoading ? <LoadingSpinner /> : ICONS.CLOCK}
-            <span className="ml-2">{isLoading ? 'Generating...' : 'Generate Cron'}</span>
-          </button>
+          <Tooltip text="Generate cron expression using AI">
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="inline-flex items-center justify-center w-full sm:w-auto px-6 py-3 font-semibold text-background bg-secondary rounded-lg shadow-md hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-secondary disabled:bg-surface disabled:text-text-muted disabled:cursor-not-allowed transition-colors"
+            >
+              {isLoading ? <LoadingSpinner /> : ICONS.CLOCK}
+              <span className="ml-2">{isLoading ? 'Generating...' : 'Generate Cron'}</span>
+            </button>
+          </Tooltip>
         </form>
       </div>
 

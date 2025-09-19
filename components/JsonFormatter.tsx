@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import Tooltip from './Tooltip';
 
 const JsonFormatter: React.FC = () => {
   const [input, setInput] = useState('');
@@ -61,18 +62,22 @@ const JsonFormatter: React.FC = () => {
             </div>
         </div>
         <div className="flex items-center justify-center space-x-4">
-            <button
-                onClick={handleFormat}
-                className="inline-flex items-center justify-center px-6 py-3 font-semibold text-background bg-secondary rounded-lg shadow-md hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-secondary transition-colors"
-            >
-                Format & Validate
-            </button>
-            <button
-                onClick={handleClear}
-                className="inline-flex items-center justify-center px-6 py-3 font-semibold text-text bg-primary rounded-lg hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-secondary transition-colors"
-            >
-                Clear
-            </button>
+            <Tooltip text="Beautify and check for errors in your JSON">
+              <button
+                  onClick={handleFormat}
+                  className="inline-flex items-center justify-center px-6 py-3 font-semibold text-background bg-secondary rounded-lg shadow-md hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-secondary transition-colors"
+              >
+                  Format & Validate
+              </button>
+            </Tooltip>
+            <Tooltip text="Clear both input and output fields">
+              <button
+                  onClick={handleClear}
+                  className="inline-flex items-center justify-center px-6 py-3 font-semibold text-text bg-primary rounded-lg hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-secondary transition-colors"
+              >
+                  Clear
+              </button>
+            </Tooltip>
         </div>
     </div>
   );

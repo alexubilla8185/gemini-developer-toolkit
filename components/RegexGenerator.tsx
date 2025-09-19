@@ -6,6 +6,7 @@ import type { RegexResponse } from '../types';
 import { ICONS } from '../constants';
 import { useNotification } from '../context/NotificationContext';
 import { useFavorites } from '../context/FavoritesContext';
+import Tooltip from './Tooltip';
 
 const RegexGenerator: React.FC = () => {
   const [prompt, setPrompt] = useState<string>('');
@@ -70,14 +71,16 @@ const RegexGenerator: React.FC = () => {
             className="w-full h-32 p-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-secondary focus:outline-none transition-shadow"
             disabled={isLoading}
           />
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="inline-flex items-center justify-center w-full sm:w-auto px-6 py-3 font-semibold text-background bg-secondary rounded-lg shadow-md hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-secondary disabled:bg-surface disabled:text-text-muted disabled:cursor-not-allowed transition-colors"
-          >
-            {isLoading ? <LoadingSpinner /> : ICONS.WAND}
-            <span className="ml-2">{isLoading ? 'Generating...' : 'Generate Regex'}</span>
-          </button>
+          <Tooltip text="Generate regex using AI">
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="inline-flex items-center justify-center w-full sm:w-auto px-6 py-3 font-semibold text-background bg-secondary rounded-lg shadow-md hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-secondary disabled:bg-surface disabled:text-text-muted disabled:cursor-not-allowed transition-colors"
+            >
+              {isLoading ? <LoadingSpinner /> : ICONS.WAND}
+              <span className="ml-2">{isLoading ? 'Generating...' : 'Generate Regex'}</span>
+            </button>
+          </Tooltip>
         </form>
       </div>
 
@@ -97,10 +100,12 @@ const RegexGenerator: React.FC = () => {
           <div className="space-y-6 animate-fade-in">
              <div className="flex justify-between items-center">
                 <h3 className="font-semibold text-text">Generated Regex Pattern</h3>
-                <button onClick={handleSaveToFavorites} className="flex items-center gap-1.5 p-2 text-sm text-text-muted hover:text-secondary transition-colors" aria-label="Save to collection">
-                    {ICONS.STAR}
-                    <span>Save</span>
-                </button>
+                <Tooltip text="Save to collection">
+                  <button onClick={handleSaveToFavorites} className="flex items-center gap-1.5 p-2 text-sm text-text-muted hover:text-secondary transition-colors" aria-label="Save to collection">
+                      {ICONS.STAR}
+                      <span>Save</span>
+                  </button>
+                </Tooltip>
             </div>
             <CodeBlock code={result.pattern} />
             <div>

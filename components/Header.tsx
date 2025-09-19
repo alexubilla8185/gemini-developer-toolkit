@@ -2,13 +2,16 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Tool } from '../types';
 import Logo from './Logo';
+import { ICONS } from '../constants';
+import Tooltip from './Tooltip';
 
 interface HeaderProps {
   activeTool: Tool;
   setActiveTool: (tool: Tool) => void;
+  onHowItWorksClick: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ activeTool, setActiveTool }) => {
+const Header: React.FC<HeaderProps> = ({ activeTool, setActiveTool, onHowItWorksClick }) => {
   const navButtonClasses = (tool: Tool) => 
     `px-2 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-colors duration-200 ${
       activeTool === tool
@@ -53,6 +56,16 @@ const Header: React.FC<HeaderProps> = ({ activeTool, setActiveTool }) => {
           >
             Collection
           </button>
+          <div className="border-l border-border h-6 mx-2"></div>
+           <Tooltip text="How it works">
+              <button 
+                onClick={onHowItWorksClick} 
+                className="p-2 text-text-muted hover:text-text rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-secondary"
+                aria-label="Open help modal"
+              >
+                {ICONS.QUESTION_MARK}
+              </button>
+            </Tooltip>
         </div>
       </nav>
     </header>

@@ -4,6 +4,7 @@ import { FavoriteComponent, FavoriteRegex } from '../types';
 import CodeBlock from './CodeBlock';
 import { ICONS } from '../constants';
 import { useNotification } from '../context/NotificationContext';
+import Tooltip from './Tooltip';
 
 const FavoriteRegexCard: React.FC<{ item: FavoriteRegex }> = ({ item }) => {
     const { removeFavoriteRegex } = useFavorites();
@@ -21,9 +22,11 @@ const FavoriteRegexCard: React.FC<{ item: FavoriteRegex }> = ({ item }) => {
                     <p className="text-sm text-text-muted">Prompt:</p>
                     <p className="font-semibold text-text italic">"{item.prompt}"</p>
                 </div>
-                <button onClick={handleDelete} className="text-text-muted hover:text-danger transition-colors" aria-label="Delete saved regex">
-                    {ICONS.TRASH}
-                </button>
+                <Tooltip text="Remove from collection">
+                  <button onClick={handleDelete} className="text-text-muted hover:text-danger transition-colors p-1 rounded-full" aria-label="Delete saved regex">
+                      {ICONS.TRASH}
+                  </button>
+                </Tooltip>
             </div>
             <div>
                 <p className="text-sm font-semibold mb-2 text-text-muted">Pattern</p>
@@ -56,9 +59,11 @@ const FavoriteComponentCard: React.FC<{ item: FavoriteComponent }> = ({ item }) 
                     <p className="text-sm text-text-muted">Prompt:</p>
                     <p className="font-semibold text-text italic">"{item.prompt}"</p>
                 </div>
-                <button onClick={handleDelete} className="text-text-muted hover:text-danger transition-colors" aria-label="Delete saved component">
-                    {ICONS.TRASH}
-                </button>
+                <Tooltip text="Remove from collection">
+                  <button onClick={handleDelete} className="text-text-muted hover:text-danger transition-colors p-1 rounded-full" aria-label="Delete saved component">
+                      {ICONS.TRASH}
+                  </button>
+                </Tooltip>
             </div>
             <div>
                 <p className="text-sm font-semibold mb-2 text-text-muted">Code</p>

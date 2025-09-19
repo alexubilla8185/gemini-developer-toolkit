@@ -6,6 +6,7 @@ import { ICONS } from '../constants';
 import { useNotification } from '../context/NotificationContext';
 import { useFavorites } from '../context/FavoritesContext';
 import { Framework } from '../types';
+import Tooltip from './Tooltip';
 
 // Moved helper function outside the component to prevent re-creation on every render.
 const createIframeContent = (componentCode: string, framework: Framework, theme: 'light' | 'dark') => {
@@ -157,18 +158,20 @@ const ComponentGenerator: React.FC = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="framework-select" className="block text-sm font-medium text-text-muted mb-2">Framework</label>
-            <select
-              id="framework-select"
-              value={framework}
-              onChange={(e) => setFramework(e.target.value as Framework)}
-              disabled={isLoading}
-              className="w-full p-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-secondary focus:outline-none transition-shadow"
-            >
-              <option value="react">React</option>
-              <option value="vue">Vue</option>
-              <option value="svelte">Svelte</option>
-              <option value="html">HTML</option>
-            </select>
+            <Tooltip text="Select the code framework for the generated component">
+              <select
+                id="framework-select"
+                value={framework}
+                onChange={(e) => setFramework(e.target.value as Framework)}
+                disabled={isLoading}
+                className="w-full p-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-secondary focus:outline-none transition-shadow"
+              >
+                <option value="react">React</option>
+                <option value="vue">Vue</option>
+                <option value="svelte">Svelte</option>
+                <option value="html">HTML</option>
+              </select>
+            </Tooltip>
           </div>
           <div>
             <label htmlFor="component-prompt" className="sr-only">Component Description</label>
@@ -181,14 +184,16 @@ const ComponentGenerator: React.FC = () => {
               disabled={isLoading}
             />
           </div>
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="inline-flex items-center justify-center w-full sm:w-auto px-6 py-3 font-semibold text-background bg-secondary rounded-lg shadow-md hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-secondary disabled:bg-surface disabled:text-text-muted disabled:cursor-not-allowed transition-colors"
-          >
-            {isLoading ? <LoadingSpinner /> : ICONS.WAND}
-            <span className="ml-2">{isLoading ? 'Generating...' : 'Generate Component'}</span>
-          </button>
+          <Tooltip text="Generate component using AI">
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="inline-flex items-center justify-center w-full sm:w-auto px-6 py-3 font-semibold text-background bg-secondary rounded-lg shadow-md hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-secondary disabled:bg-surface disabled:text-text-muted disabled:cursor-not-allowed transition-colors"
+            >
+              {isLoading ? <LoadingSpinner /> : ICONS.WAND}
+              <span className="ml-2">{isLoading ? 'Generating...' : 'Generate Component'}</span>
+            </button>
+          </Tooltip>
         </form>
       </div>
 
@@ -214,18 +219,24 @@ const ComponentGenerator: React.FC = () => {
                 <div className="flex items-center space-x-2">
                     {activeTab === 'preview' && isPreviewSupported && (
                         <div className="flex items-center space-x-1 mr-2 bg-background p-1 rounded-lg">
-                            <button onClick={() => setPreviewTheme('light')} className={themeButtonClasses('light')} aria-label="Switch to light theme">
-                                {ICONS.SUN}
-                            </button>
-                            <button onClick={() => setPreviewTheme('dark')} className={themeButtonClasses('dark')} aria-label="Switch to dark theme">
-                                {ICONS.MOON}
-                            </button>
+                            <Tooltip text="Switch to light theme">
+                              <button onClick={() => setPreviewTheme('light')} className={themeButtonClasses('light')} aria-label="Switch to light theme">
+                                  {ICONS.SUN}
+                              </button>
+                            </Tooltip>
+                            <Tooltip text="Switch to dark theme">
+                              <button onClick={() => setPreviewTheme('dark')} className={themeButtonClasses('dark')} aria-label="Switch to dark theme">
+                                  {ICONS.MOON}
+                              </button>
+                            </Tooltip>
                         </div>
                     )}
                     {!isLoading && generatedCode && (
-                         <button onClick={handleSaveToFavorites} className="flex items-center gap-1.5 p-2 text-sm text-text-muted hover:text-secondary transition-colors" aria-label="Save to collection">
-                            {ICONS.STAR}
-                        </button>
+                        <Tooltip text="Save to collection">
+                          <button onClick={handleSaveToFavorites} className="flex items-center gap-1.5 p-2 text-sm text-text-muted hover:text-secondary transition-colors" aria-label="Save to collection">
+                              {ICONS.STAR}
+                          </button>
+                        </Tooltip>
                     )}
                 </div>
             </div>
