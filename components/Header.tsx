@@ -10,7 +10,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ activeTool, setActiveTool }) => {
   const navButtonClasses = (tool: Tool) => 
-    `px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+    `px-2 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-colors duration-200 ${
       activeTool === tool
         ? 'text-secondary'
         : 'text-text-muted hover:text-text'
@@ -34,6 +34,18 @@ const Header: React.FC<HeaderProps> = ({ activeTool, setActiveTool }) => {
             className={navButtonClasses(Tool.Regex)}
           >
             Regex Generator
+          </button>
+          <button
+            onClick={() => setActiveTool(Tool.Json)}
+            className={navButtonClasses(Tool.Json)}
+          >
+            JSON Formatter
+          </button>
+          <button
+            onClick={() => setActiveTool(Tool.Cron)}
+            className={navButtonClasses(Tool.Cron)}
+          >
+            Cron Generator
           </button>
           <button
             onClick={() => setActiveTool(Tool.Favorites)}

@@ -46,20 +46,30 @@ const LandingPage: React.FC = () => {
       
         {/* Features Section */}
         <section className="py-16 sm:py-24 bg-background border-t border-border">
-            <div className="max-w-5xl mx-auto px-4 sm:px-6 md:px-8">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
                 <h2 className="text-center text-4xl font-bold tracking-tight text-text sm:text-5xl mb-12">
-                    Key Features
+                    An Entire Toolkit for Developers
                 </h2>
-                <div className="grid md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                    <FeatureCard 
                         title="UI Component Generator"
-                        description="Describe the component you want in plain English. Our AI will generate the full React and Tailwind CSS code for you."
+                        description="Describe components in plain English and get production-ready code in React, Vue, Svelte, or HTML."
                         icon={ICONS.WAND}
                    />
                    <FeatureCard 
                         title="Regex Generator"
-                        description="Struggling with complex patterns? Describe what you need to match, and get the regex and a detailed explanation instantly."
+                        description="Instantly get the regex you need, plus a step-by-step explanation, just by describing the pattern."
                         icon={ICONS.WAND}
+                   />
+                   <FeatureCard 
+                        title="JSON Formatter"
+                        description="Quickly format, validate, and clean up messy JSON. An essential tool for handling API responses and data."
+                        icon={ICONS.JSON_BRACKETS}
+                   />
+                   <FeatureCard 
+                        title="AI Cron Generator"
+                        description="Turn simple schedules like 'every Monday at 9am' into valid cron expressions with clear AI-powered explanations."
+                        icon={ICONS.CLOCK}
                    />
                 </div>
             </div>

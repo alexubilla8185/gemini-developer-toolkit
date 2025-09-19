@@ -1,4 +1,4 @@
-import type { RegexResponse, Framework } from '../types';
+import type { RegexResponse, Framework, CronResponse } from '../types';
 
 export const generateComponent = async (
     prompt: string,
@@ -73,5 +73,33 @@ export const generateRegex = async (prompt: string): Promise<RegexResponse> => {
              throw new Error("Failed to parse the response from the server. The format was unexpected.");
         }
         throw new Error("Failed to generate regex. Please check your network connection.");
+    }
+};
+
+export const generateCron = async (prompt: string): Promise<CronResponse> => {
+    try {
+        const response = await fetch('/.netlify/functions/generate-cron', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prompt }),
+        });
+        
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || 'Failed to generate cron from server.');
+        }
+        
+        if (typeof data.cronString === 'string' && typeof data.explanation === 'string') {
+            return data;
+        } else {
+            throw new Error("Invalid response format from server.");
+        }
+    } catch (error) {
+        console.error("Error calling generate-cron function:", error);
+        if (error instanceof SyntaxError) {
+             throw new Error("Failed to parse the response from the server. The format was unexpected.");
+        }
+        throw new Error("Failed to generate cron expression. Please check your network connection.");
     }
 };

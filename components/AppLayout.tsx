@@ -8,6 +8,8 @@ import { ICONS } from '../constants';
 import { MadeByTekguyz } from './MadeByTekguyz';
 import AppSpecsModal from './AppSpecsModal';
 import FooterLogo from './FooterLogo';
+import JsonFormatter from './JsonFormatter';
+import CronGenerator from './CronGenerator';
 
 const AppLayout: React.FC = () => {
   const [activeTool, setActiveTool] = useState<Tool>(Tool.Component);
@@ -19,6 +21,8 @@ const AppLayout: React.FC = () => {
       <main className="p-4 sm:p-6 md:p-8 flex-grow">
         {activeTool === Tool.Component && <ComponentGenerator />}
         {activeTool === Tool.Regex && <RegexGenerator />}
+        {activeTool === Tool.Json && <JsonFormatter />}
+        {activeTool === Tool.Cron && <CronGenerator />}
         {activeTool === Tool.Favorites && <FavoritesView />}
       </main>
       <footer className="text-center p-4 text-sm text-text-muted border-t border-border">
