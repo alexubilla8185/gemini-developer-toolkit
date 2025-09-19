@@ -1,14 +1,15 @@
-import type { RegexResponse } from '../types';
+import type { RegexResponse, Framework } from '../types';
 
 export const generateComponent = async (
     prompt: string,
+    framework: Framework,
     onChunk: (chunk: string) => void
 ): Promise<void> => {
     try {
         const response = await fetch('/.netlify/functions/generate-component', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ prompt }),
+            body: JSON.stringify({ prompt, framework }),
         });
 
         if (!response.ok) {

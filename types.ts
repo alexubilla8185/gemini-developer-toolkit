@@ -5,6 +5,8 @@ export enum Tool {
   Favorites = 'favorites',
 }
 
+export type Framework = 'react' | 'vue' | 'svelte' | 'html';
+
 export interface RegexResponse {
   pattern: string;
   explanation: string;

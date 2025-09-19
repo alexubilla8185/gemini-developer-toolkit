@@ -5,36 +5,52 @@ import LoadingSpinner from './LoadingSpinner';
 import { ICONS } from '../constants';
 import { useNotification } from '../context/NotificationContext';
 import { useFavorites } from '../context/FavoritesContext';
+import { Framework } from '../types';
 
 // Moved helper function outside the component to prevent re-creation on every render.
-const createIframeContent = (componentCode: string, theme: 'light' | 'dark') => {
+const createIframeContent = (componentCode: string, framework: Framework, theme: 'light' | 'dark') => {
   const isDark = theme === 'dark';
+  const bodyStyles = `
+    body { 
+      background-color: ${isDark ? '#0e1116' : '#f8fafc'};
+      color: ${isDark ? '#e5e7eb' : '#111827'};
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 1rem;
+      font-family: sans-serif;
+    }
+  `;
+
+  if (framework === 'html') {
+    return `
+      <!DOCTYPE html>
+      <html class="${isDark ? 'dark' : ''}">
+        <head>
+          <script src="https://cdn.tailwindcss.com"></script>
+          <script>tailwind.config = { darkMode: 'class' }</script>
+          <style>${bodyStyles}</style>
+        </head>
+        <body>
+          ${componentCode}
+        </body>
+      </html>
+    `;
+  }
+  
+  // Default to React logic
   return `
     <!DOCTYPE html>
     <html class="${isDark ? 'dark' : ''}">
       <head>
         <script src="https://cdn.tailwindcss.com"></script>
-        <script>
-          tailwind.config = {
-            darkMode: 'class',
-          }
-        </script>
+        <script>tailwind.config = { darkMode: 'class' }</script>
         <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
         <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
         <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-        <style>
-          body { 
-            background-color: ${isDark ? '#0e1116' : '#f8fafc'};
-            color: ${isDark ? '#e5e7eb' : '#111827'};
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 1rem;
-            font-family: sans-serif;
-          }
-        </style>
+        <style>${bodyStyles}</style>
       </head>
       <body>
         <div id="component-root"></div>
@@ -57,6 +73,7 @@ const createIframeContent = (componentCode: string, theme: 'light' | 'dark') => 
 
 const ComponentGenerator: React.FC = () => {
   const [prompt, setPrompt] = useState<string>('');
+  const [framework, setFramework] = useState<Framework>('react');
   const [generatedCode, setGeneratedCode] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -65,22 +82,23 @@ const ComponentGenerator: React.FC = () => {
   const { showNotification } = useNotification();
   const { addFavoriteComponent } = useFavorites();
 
+  const isPreviewSupported = useMemo(() => ['react', 'html'].includes(framework), [framework]);
+
   const handleSaveToFavorites = () => {
     if (!generatedCode || !prompt) return;
     addFavoriteComponent({
       id: crypto.randomUUID(),
-      prompt,
+      prompt: `(${framework}) ${prompt}`,
       code: generatedCode,
       createdAt: new Date().toISOString(),
     });
     showNotification('Component saved to your collection!', 'success');
   };
 
-  // Memoize the iframe content to prevent unnecessary re-renders.
   const iframeContent = useMemo(() => {
-    if (!generatedCode) return '';
-    return createIframeContent(generatedCode, previewTheme);
-  }, [generatedCode, previewTheme]);
+    if (!generatedCode || !isPreviewSupported) return '';
+    return createIframeContent(generatedCode, framework, previewTheme);
+  }, [generatedCode, previewTheme, framework, isPreviewSupported]);
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
@@ -94,10 +112,10 @@ const ComponentGenerator: React.FC = () => {
     setIsLoading(true);
     setError(null);
     setGeneratedCode('');
-    setActiveTab('code'); // Default to code view while streaming
+    setActiveTab('code');
 
     try {
-      await generateComponent(prompt, (chunk) => {
+      await generateComponent(prompt, framework, (chunk) => {
         setGeneratedCode((prevCode) => prevCode + chunk);
       });
     } catch (err: any) {
@@ -106,9 +124,13 @@ const ComponentGenerator: React.FC = () => {
       showNotification(errorMessage, 'error');
     } finally {
       setIsLoading(false);
-      setActiveTab('preview'); // Switch to preview once done
+      if (['react', 'html'].includes(framework)) {
+        setActiveTab('preview');
+      } else {
+        setActiveTab('code');
+      }
     }
-  }, [prompt, showNotification]);
+  }, [prompt, framework, showNotification]);
   
   const tabClasses = (tabName: 'preview' | 'code') => 
     `px-4 py-2 text-sm font-medium transition-colors duration-200 border-b-2 ${
@@ -133,15 +155,32 @@ const ComponentGenerator: React.FC = () => {
           <p className="text-text-muted">Describe the component you want to build. The more detailed your description, the better the result.</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <label htmlFor="component-prompt" className="sr-only">Component Description</label>
-          <textarea
-            id="component-prompt"
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            placeholder="e.g., 'A responsive navbar with a logo and three links', or 'a product card with an image and a buy button'."
-            className="w-full h-32 p-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-secondary focus:outline-none transition-shadow"
-            disabled={isLoading}
-          />
+          <div>
+            <label htmlFor="framework-select" className="block text-sm font-medium text-text-muted mb-2">Framework</label>
+            <select
+              id="framework-select"
+              value={framework}
+              onChange={(e) => setFramework(e.target.value as Framework)}
+              disabled={isLoading}
+              className="w-full p-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-secondary focus:outline-none transition-shadow"
+            >
+              <option value="react">React</option>
+              <option value="vue">Vue</option>
+              <option value="svelte">Svelte</option>
+              <option value="html">HTML</option>
+            </select>
+          </div>
+          <div>
+            <label htmlFor="component-prompt" className="sr-only">Component Description</label>
+            <textarea
+              id="component-prompt"
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              placeholder="e.g., 'A responsive navbar with a logo and three links', or 'a product card with an image and a buy button'."
+              className="w-full h-32 p-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-secondary focus:outline-none transition-shadow"
+              disabled={isLoading}
+            />
+          </div>
           <button
             type="submit"
             disabled={isLoading}
@@ -173,7 +212,7 @@ const ComponentGenerator: React.FC = () => {
                     <button id="code-tab" role="tab" aria-selected={activeTab === 'code'} aria-controls="code-panel" onClick={() => setActiveTab('code')} className={tabClasses('code')}>Code</button>
                 </div>
                 <div className="flex items-center space-x-2">
-                    {activeTab === 'preview' && (
+                    {activeTab === 'preview' && isPreviewSupported && (
                         <div className="flex items-center space-x-1 mr-2 bg-background p-1 rounded-lg">
                             <button onClick={() => setPreviewTheme('light')} className={themeButtonClasses('light')} aria-label="Switch to light theme">
                                 {ICONS.SUN}
@@ -196,14 +235,21 @@ const ComponentGenerator: React.FC = () => {
                     role="tabpanel"
                     aria-labelledby="preview-tab"
                     hidden={activeTab !== 'preview'}
-                    className={`w-full h-full rounded-b-lg overflow-hidden ${previewTheme === 'light' ? 'bg-gray-100' : 'bg-background'}`}
+                    className="w-full h-full rounded-b-lg overflow-hidden"
                 >
-                    <iframe
-                      srcDoc={iframeContent}
-                      title="Component Preview"
-                      className="w-full h-full border-0"
-                      sandbox="allow-scripts"
-                    />
+                    {isPreviewSupported ? (
+                        <iframe
+                        srcDoc={iframeContent}
+                        title="Component Preview"
+                        className={`w-full h-full border-0 ${previewTheme === 'light' ? 'bg-gray-100' : 'bg-background'}`}
+                        sandbox="allow-scripts"
+                        />
+                    ) : (
+                        <div className="flex flex-col items-center justify-center h-full text-text-muted p-8 text-center">
+                            <h3 className="font-semibold text-text mb-2">Preview Not Available</h3>
+                            <p className="text-sm">Live preview is not supported for the '{framework}' framework at this time.</p>
+                        </div>
+                    )}
                 </div>
                 <div
                     id="code-panel"

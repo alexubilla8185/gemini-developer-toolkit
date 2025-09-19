@@ -1,6 +1,9 @@
 import { GoogleGenAI } from "@google/genai";
 
-const componentGeneratorSystemInstruction = `You are an expert React and Tailwind CSS developer. Your task is to generate the TSX for a single, self-contained React functional component.
+type Framework = 'react' | 'vue' | 'svelte' | 'html';
+
+const systemInstructions: Record<Framework, string> = {
+  react: `You are an expert React and Tailwind CSS developer. Your task is to generate the TSX for a single, self-contained React functional component.
 The code should use TypeScript and Tailwind CSS. The component MUST be named 'GeneratedComponent'.
 Do not add any explanation, comments, imports, or 'export default'.
 Just provide the raw component code, starting with 'const GeneratedComponent ...'.
@@ -16,15 +19,29 @@ const GeneratedComponent = () => {
       <button className="w-full bg-blue-500 text-white p-2 rounded">Log In</button>
     </div>
   );
+};`,
+  vue: `You are an expert Vue and Tailwind CSS developer. Your task is to generate the code for a single, self-contained Vue 3 Single File Component (SFC) using the Composition API (<script setup>).
+The code should use TypeScript.
+Do not add any explanation or comments.
+Just provide the raw SFC code, starting with '<template>'.
+The component should be functional and aesthetically pleasing.`,
+  svelte: `You are an expert Svelte and Tailwind CSS developer. Your task is to generate the code for a single, self-contained Svelte component.
+The code should use a <script lang="ts"> block for any logic.
+Do not add any explanation or comments.
+Just provide the raw .svelte file code.
+The component should be functional and aesthetically pleasing.`,
+  html: `You are an expert HTML and Tailwind CSS developer. Your task is to generate a single, self-contained HTML snippet.
+The code should only contain HTML elements with Tailwind CSS classes.
+Do not include <!DOCTYPE>, <html>, <head>, or <body> tags.
+Do not include any <script> or <style> tags unless absolutely necessary for the component's interactivity (like a simple dropdown).
+Just provide the raw HTML code. The component should be functional and aesthetically pleasing.`,
 };
-`;
 
-// This interface is for the incoming request from the Netlify frontend.
 interface RequestBody {
     prompt: string;
+    framework: Framework;
 }
 
-// Netlify's modern handler for streaming responses uses Request and Response objects.
 export default async (req: Request) => {
   if (req.method !== 'POST') {
     return new Response('Method Not Allowed', { status: 405 });
@@ -38,7 +55,7 @@ export default async (req: Request) => {
   }
   
   try {
-    const { prompt } = (await req.json()) as RequestBody;
+    const { prompt, framework } = (await req.json()) as RequestBody;
     if (!prompt) {
         return new Response(JSON.stringify({ error: "Prompt is required." }), { 
             status: 400,
@@ -46,19 +63,18 @@ export default async (req: Request) => {
         });
     }
 
+    const systemInstruction = systemInstructions[framework] || systemInstructions.react;
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     
-    // Use the streaming model
     const responseStream = await ai.models.generateContentStream({
         model: "gemini-2.5-flash",
         contents: prompt,
         config: {
-            systemInstruction: componentGeneratorSystemInstruction,
+            systemInstruction: systemInstruction,
             temperature: 0.2,
         }
     });
 
-    // Create a new stream to pipe the results to the client
     const stream = new ReadableStream({
       async start(controller) {
         const encoder = new TextEncoder();
