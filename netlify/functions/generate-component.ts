@@ -50,8 +50,8 @@ export default async (req: Request) => {
     return new Response('Method Not Allowed', { status: 405 });
   }
 
-  // FIX: Switched from Netlify.env.get("API_KEY") to process.env.API_KEY.
-  const apiKey = process.env.API_KEY;
+  // FIX: Use the correct environment variable name from Netlify settings.
+  const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
     return new Response(JSON.stringify({ error: "Server configuration error. Could not connect to the AI service." }), {
       status: 500,
