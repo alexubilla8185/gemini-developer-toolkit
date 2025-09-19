@@ -27,7 +27,7 @@ interface MadeByTekguyzProps {
 export const MadeByTekguyz: React.FC<MadeByTekguyzProps> = ({ theme = 'dark' }) => {
   const themeClasses = {
     dark: 'bg-black text-gray-400 hover:text-white',
-    light: 'bg-white text-gray-500 hover:text-black'
+    light: 'bg-white text-gray-800 hover:text-black'
   };
 
   return (

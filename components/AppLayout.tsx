@@ -41,7 +41,7 @@ const AppLayout: React.FC = () => {
             </div>
         </div>
       </footer>
-      <MadeByTekguyz theme="dark" />
+      <MadeByTekguyz theme="light" />
       {isSpecsModalOpen && <AppSpecsModal onClose={() => setIsSpecsModalOpen(false)} />}
       {isHowItWorksModalOpen && <HowItWorksModal onClose={() => setIsHowItWorksModalOpen(false)} />}
     </div>

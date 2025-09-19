@@ -90,7 +90,7 @@ const LandingPage: React.FC = () => {
                 </div>
             </div>
         </footer>
-        <MadeByTekguyz theme="dark" />
+        <MadeByTekguyz theme="light" />
         {isModalOpen && <AppSpecsModal onClose={() => setIsModalOpen(false)} />}
     </div>
   );
