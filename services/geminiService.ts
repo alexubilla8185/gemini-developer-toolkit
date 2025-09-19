@@ -12,8 +12,18 @@ export const generateComponent = async (
         });
 
         if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || 'Failed to generate component from server.');
+            const errorText = await response.text();
+            let errorMessage = `Server responded with status ${response.status}`;
+            try {
+                // Try to parse as JSON for structured errors from our function
+                const errorJson = JSON.parse(errorText);
+                errorMessage = errorJson.error || errorMessage;
+            } catch (e) {
+                // If parsing fails, it's likely an HTML error page (e.g., from Netlify)
+                errorMessage = `Failed to generate component. The server returned an unexpected response.`;
+                console.error("Non-JSON response from server:", errorText);
+            }
+            throw new Error(errorMessage);
         }
 
         if (!response.body) {
@@ -33,7 +43,7 @@ export const generateComponent = async (
 
     } catch (error) {
         console.error("Error calling generate-component function:", error);
-        throw new Error("Failed to generate component. Please check your network connection.");
+        throw error; // Re-throw the original or newly constructed error
     }
 };
 

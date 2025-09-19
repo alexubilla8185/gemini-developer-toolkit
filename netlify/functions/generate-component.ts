@@ -88,8 +88,3 @@ export default async (req: Request) => {
     });
   }
 };
-
-// Netlify requires a config object to specify the function path for modern handlers.
-export const config = {
-    path: "/.netlify/functions/generate-component",
-};
