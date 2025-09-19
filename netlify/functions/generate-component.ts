@@ -1,5 +1,8 @@
 import { GoogleGenAI } from "@google/genai";
 
+// FIX: Removed 'declare global' for Netlify to resolve "Cannot redeclare block-scoped variable" error.
+// Netlify function environment variables are also available on process.env.
+
 type Framework = 'react' | 'vue' | 'svelte' | 'html';
 
 const systemInstructions: Record<Framework, string> = {
@@ -47,7 +50,9 @@ export default async (req: Request) => {
     return new Response('Method Not Allowed', { status: 405 });
   }
 
-  if (!process.env.API_KEY) {
+  // FIX: Switched from Netlify.env.get("API_KEY") to process.env.API_KEY.
+  const apiKey = process.env.API_KEY;
+  if (!apiKey) {
     return new Response(JSON.stringify({ error: "Server configuration error. Could not connect to the AI service." }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
@@ -64,7 +69,7 @@ export default async (req: Request) => {
     }
 
     const systemInstruction = systemInstructions[framework] || systemInstructions.react;
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = new GoogleGenAI({ apiKey });
     
     const responseStream = await ai.models.generateContentStream({
         model: "gemini-2.5-flash",
