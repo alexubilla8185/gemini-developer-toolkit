@@ -71,7 +71,7 @@ const RegexGenerator: React.FC = () => {
         ) : error ? (
           <div className="flex flex-col items-center justify-center h-full p-8 text-center">
             <h3 className="font-semibold text-danger">Generation Failed</h3>
-            <p className="mt-2 text-sm text-danger bg-danger/10 p-4 rounded-md w-full">{error}</p>
+            <div role="alert" className="mt-2 text-sm text-danger bg-danger/10 p-4 rounded-md w-full">{error}</div>
           </div>
         ) : result ? (
           <div className="space-y-6">

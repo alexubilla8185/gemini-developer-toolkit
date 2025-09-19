@@ -28,7 +28,7 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ code }) => {
       <button
         onClick={handleCopy}
         className="absolute top-2 right-2 p-2 bg-primary text-text-muted hover:text-text rounded-md opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100 focus:ring-2 focus:ring-secondary"
-        aria-label="Copy code to clipboard"
+        aria-label={isCopied ? "Code copied to clipboard" : "Copy code to clipboard"}
       >
         {isCopied ? ICONS.CHECK : ICONS.COPY}
       </button>

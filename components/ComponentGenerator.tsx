@@ -144,14 +144,14 @@ const ComponentGenerator: React.FC = () => {
         ) : error ? (
           <div className="flex flex-col items-center justify-center h-full p-8 text-center">
             <h3 className="font-semibold text-danger">Generation Failed</h3>
-            <p className="mt-2 text-sm text-danger bg-danger/10 p-4 rounded-md w-full">{error}</p>
+            <div role="alert" className="mt-2 text-sm text-danger bg-danger/10 p-4 rounded-md w-full">{error}</div>
           </div>
         ) : generatedCode || isLoading ? (
           <div className="flex flex-col flex-grow">
             <div className="flex justify-between items-center border-b border-border px-2">
-                <div className="flex">
-                    <button onClick={() => setActiveTab('preview')} className={tabClasses('preview')}>Live Preview</button>
-                    <button onClick={() => setActiveTab('code')} className={tabClasses('code')}>Code</button>
+                <div role="tablist" aria-label="Output view tabs" className="flex">
+                    <button id="preview-tab" role="tab" aria-selected={activeTab === 'preview'} aria-controls="preview-panel" onClick={() => setActiveTab('preview')} className={tabClasses('preview')}>Live Preview</button>
+                    <button id="code-tab" role="tab" aria-selected={activeTab === 'code'} aria-controls="code-panel" onClick={() => setActiveTab('code')} className={tabClasses('code')}>Code</button>
                 </div>
                 {activeTab === 'preview' && (
                     <div className="flex items-center space-x-1 mr-2 bg-background p-1 rounded-lg">
@@ -165,20 +165,29 @@ const ComponentGenerator: React.FC = () => {
                 )}
             </div>
             <div className="flex-grow relative bg-background rounded-b-lg">
-                {activeTab === 'preview' ? (
-                  <div className={`w-full h-full rounded-b-lg overflow-hidden ${previewTheme === 'light' ? 'bg-gray-100' : 'bg-background'}`}>
+                <div
+                    id="preview-panel"
+                    role="tabpanel"
+                    aria-labelledby="preview-tab"
+                    hidden={activeTab !== 'preview'}
+                    className={`w-full h-full rounded-b-lg overflow-hidden ${previewTheme === 'light' ? 'bg-gray-100' : 'bg-background'}`}
+                >
                     <iframe
                       srcDoc={iframeContent}
                       title="Component Preview"
                       className="w-full h-full border-0"
                       sandbox="allow-scripts"
                     />
-                  </div>
-                ) : (
-                  <div className="absolute inset-0 overflow-auto">
+                </div>
+                <div
+                    id="code-panel"
+                    role="tabpanel"
+                    aria-labelledby="code-tab"
+                    hidden={activeTab !== 'code'}
+                    className="absolute inset-0 overflow-auto"
+                >
                     <CodeBlock code={generatedCode} />
-                  </div>
-                )}
+                </div>
             </div>
           </div>
         ) : (

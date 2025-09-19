@@ -18,7 +18,7 @@ const Header: React.FC<HeaderProps> = ({ activeTool, setActiveTool }) => {
 
   return (
     <header className="bg-background/90 backdrop-blur-sm sticky top-0 z-10 border-b border-border">
-      <nav className="container mx-auto px-4 sm:px-6 md:px-8 py-3 flex justify-between items-center">
+      <nav className="container mx-auto px-4 sm:px-6 md:px-8 py-3 flex justify-between items-center" aria-label="Main navigation">
         <Link to="/" aria-label="Go to homepage">
           <Logo />
         </Link>
