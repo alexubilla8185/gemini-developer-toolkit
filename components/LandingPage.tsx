@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ICONS } from '../constants';
 import { MadeByTekguyz } from './MadeByTekguyz';
+import AppSpecsModal from './AppSpecsModal';
+import FooterLogo from './FooterLogo';
 
 const LandingPage: React.FC = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-background font-sans text-text flex flex-col">
       <main className="flex-grow flex items-center justify-center p-4">
@@ -27,19 +31,21 @@ const LandingPage: React.FC = () => {
         </div>
       </main>
       <footer className="text-center p-4 text-sm text-text-muted border-t border-border">
-        <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6">
-          <p>Designed & Developed by Alejandro Ubilla</p>
-          <div className="flex items-center space-x-4">
+        <div className="flex flex-col items-center justify-center space-y-4">
+          <div className="flex items-center space-x-6">
             <a href="https://github.com" target="_blank" rel="noopener noreferrer" aria-label="GitHub Profile" className="hover:text-text transition-colors">
               {ICONS.GITHUB}
             </a>
+            <FooterLogo onClick={() => setIsModalOpen(true)} />
             <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn Profile" className="hover:text-text transition-colors">
               {ICONS.LINKEDIN}
             </a>
           </div>
+          <p>Designed & Developed by Alejandro Ubilla</p>
         </div>
       </footer>
       <MadeByTekguyz theme="dark" />
+      {isModalOpen && <AppSpecsModal onClose={() => setIsModalOpen(false)} />}
     </div>
   );
 };
