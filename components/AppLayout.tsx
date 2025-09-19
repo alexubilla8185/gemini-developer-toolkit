@@ -5,7 +5,7 @@ import RegexGenerator from './RegexGenerator';
 import Waitlist from './Waitlist';
 import { Tool } from '../types';
 import { ICONS } from '../constants';
-import MadeByBadge from './MadeByBadge';
+import { MadeByTekguyz } from './MadeByTekguyz';
 
 const AppLayout: React.FC = () => {
   const [activeTool, setActiveTool] = useState<Tool>(Tool.Component);
@@ -29,9 +29,9 @@ const AppLayout: React.FC = () => {
                     {ICONS.LINKEDIN}
                 </a>
             </div>
-            <MadeByBadge />
         </div>
       </footer>
+      <MadeByTekguyz theme="dark" />
     </div>
   );
 };

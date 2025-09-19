@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ICONS } from '../constants';
-import MadeByBadge from './MadeByBadge';
+import { MadeByTekguyz } from './MadeByTekguyz';
 
 const LandingPage: React.FC = () => {
   return (
@@ -37,9 +37,9 @@ const LandingPage: React.FC = () => {
               {ICONS.LINKEDIN}
             </a>
           </div>
-          <MadeByBadge />
         </div>
       </footer>
+      <MadeByTekguyz theme="dark" />
     </div>
   );
 };
