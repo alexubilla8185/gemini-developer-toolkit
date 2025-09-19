@@ -37,9 +37,6 @@ const LandingPage: React.FC = () => {
               {ICONS.GITHUB}
             </a>
             <FooterLogo onClick={() => setIsModalOpen(true)} />
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn Profile" className="hover:text-text transition-colors">
-              {ICONS.LINKEDIN}
-            </a>
           </div>
         </div>
       </footer>
