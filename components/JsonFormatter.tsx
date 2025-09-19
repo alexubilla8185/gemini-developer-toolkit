@@ -61,11 +61,11 @@ const JsonFormatter: React.FC = () => {
                  </div>
             </div>
         </div>
-        <div className="flex items-center justify-center space-x-4">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Tooltip text="Beautify and check for errors in your JSON">
               <button
                   onClick={handleFormat}
-                  className="inline-flex items-center justify-center px-6 py-3 font-semibold text-background bg-secondary rounded-lg shadow-md hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-secondary transition-colors"
+                  className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 font-semibold text-background bg-secondary rounded-lg shadow-md hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-secondary transition-colors"
               >
                   Format & Validate
               </button>
@@ -73,7 +73,7 @@ const JsonFormatter: React.FC = () => {
             <Tooltip text="Clear both input and output fields">
               <button
                   onClick={handleClear}
-                  className="inline-flex items-center justify-center px-6 py-3 font-semibold text-text bg-primary rounded-lg hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-secondary transition-colors"
+                  className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 font-semibold text-text bg-primary rounded-lg hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-secondary transition-colors"
               >
                   Clear
               </button>

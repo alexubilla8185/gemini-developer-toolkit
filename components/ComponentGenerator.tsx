@@ -211,14 +211,14 @@ const ComponentGenerator: React.FC = () => {
           </div>
         ) : generatedCode || isLoading ? (
           <div className="flex flex-col flex-grow">
-            <div className="flex justify-between items-center border-b border-border px-2">
+            <div className="flex flex-col sm:flex-row justify-between sm:items-center border-b border-border p-2">
                 <div role="tablist" aria-label="Output view tabs" className="flex">
                     <button id="preview-tab" role="tab" aria-selected={activeTab === 'preview'} aria-controls="preview-panel" onClick={() => setActiveTab('preview')} className={tabClasses('preview')}>Live Preview</button>
                     <button id="code-tab" role="tab" aria-selected={activeTab === 'code'} aria-controls="code-panel" onClick={() => setActiveTab('code')} className={tabClasses('code')}>Code</button>
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 mt-2 sm:mt-0">
                     {activeTab === 'preview' && isPreviewSupported && (
-                        <div className="flex items-center space-x-1 mr-2 bg-background p-1 rounded-lg">
+                        <div className="flex items-center space-x-1 bg-background p-1 rounded-lg">
                             <Tooltip text="Switch to light theme">
                               <button onClick={() => setPreviewTheme('light')} className={themeButtonClasses('light')} aria-label="Switch to light theme">
                                   {ICONS.SUN}

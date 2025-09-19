@@ -25,7 +25,7 @@ const LandingPage: React.FC = () => {
         {/* Hero Section */}
         <main className="flex-grow flex items-center justify-center p-4 py-20 sm:py-32">
             <div className="text-center max-w-4xl mx-auto">
-                <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-4">
+                <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-tight mb-4">
                     <span className="bg-gradient-to-r from-secondary via-teal-400 to-sky-400 text-transparent bg-clip-text">
                         Your AI-Powered
                     </span>
