@@ -4,17 +4,21 @@ import CodeBlock from './CodeBlock';
 import LoadingSpinner from './LoadingSpinner';
 import type { RegexResponse } from '../types';
 import { ICONS } from '../constants';
+import { useNotification } from '../context/NotificationContext';
 
 const RegexGenerator: React.FC = () => {
   const [prompt, setPrompt] = useState<string>('');
   const [result, setResult] = useState<RegexResponse | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const { showNotification } = useNotification();
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     if (!prompt.trim()) {
-      setError('Prompt cannot be empty.');
+      const errorMessage = 'Prompt cannot be empty.';
+      setError(errorMessage);
+      showNotification(errorMessage, 'error');
       return;
     }
     
@@ -26,11 +30,13 @@ const RegexGenerator: React.FC = () => {
       const response = await generateRegex(prompt);
       setResult(response);
     } catch (err: any) {
-      setError(err.message || 'An unknown error occurred.');
+      const errorMessage = err.message || 'An unknown error occurred.';
+      setError(errorMessage);
+      showNotification(errorMessage, 'error');
     } finally {
       setIsLoading(false);
     }
-  }, [prompt]);
+  }, [prompt, showNotification]);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">

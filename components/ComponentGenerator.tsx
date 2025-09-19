@@ -3,6 +3,7 @@ import { generateComponent } from '../services/geminiService';
 import CodeBlock from './CodeBlock';
 import LoadingSpinner from './LoadingSpinner';
 import { ICONS } from '../constants';
+import { useNotification } from '../context/NotificationContext';
 
 // Moved helper function outside the component to prevent re-creation on every render.
 const createIframeContent = (componentCode: string, theme: 'light' | 'dark') => {
@@ -60,6 +61,7 @@ const ComponentGenerator: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'preview' | 'code'>('preview');
   const [previewTheme, setPreviewTheme] = useState<'light' | 'dark'>('light');
+  const { showNotification } = useNotification();
 
   // Memoize the iframe content to prevent unnecessary re-renders.
   const iframeContent = useMemo(() => {
@@ -70,7 +72,9 @@ const ComponentGenerator: React.FC = () => {
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     if (!prompt.trim()) {
-      setError('Prompt cannot be empty.');
+      const errorMessage = 'Prompt cannot be empty.';
+      setError(errorMessage);
+      showNotification(errorMessage, 'error');
       return;
     }
 
@@ -84,12 +88,14 @@ const ComponentGenerator: React.FC = () => {
         setGeneratedCode((prevCode) => prevCode + chunk);
       });
     } catch (err: any) {
-      setError(err.message || 'An unknown error occurred.');
+      const errorMessage = err.message || 'An unknown error occurred.';
+      setError(errorMessage);
+      showNotification(errorMessage, 'error');
     } finally {
       setIsLoading(false);
       setActiveTab('preview'); // Switch to preview once done
     }
-  }, [prompt]);
+  }, [prompt, showNotification]);
   
   const tabClasses = (tabName: 'preview' | 'code') => 
     `px-4 py-2 text-sm font-medium transition-colors duration-200 border-b-2 ${

@@ -1,19 +1,23 @@
 import React, { useState, useCallback } from 'react';
 import { ICONS } from '../constants';
 import LoadingSpinner from './LoadingSpinner';
+import { useNotification } from '../context/NotificationContext';
 
 const WaitlistForm: React.FC = () => {
   const [email, setEmail] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const { showNotification } = useNotification();
 
   const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     if (isLoading) return;
 
     if (!email.trim() || !/\S+@\S+\.\S+/.test(email)) {
-      setError('Please enter a valid email address.');
+      const errorMessage = 'Please enter a valid email address.';
+      setError(errorMessage);
+      showNotification(errorMessage, 'error');
       return;
     }
 
@@ -25,8 +29,9 @@ const WaitlistForm: React.FC = () => {
       console.log(`Waitlist submission: ${email}`);
       setIsLoading(false);
       setIsSubmitted(true);
+      showNotification("You're on the list! We'll be in touch.", 'success');
     }, 1000);
-  }, [email, isLoading]);
+  }, [email, isLoading, showNotification]);
 
   if (isSubmitted) {
     return (
